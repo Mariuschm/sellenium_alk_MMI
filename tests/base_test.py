@@ -1,7 +1,7 @@
 from unittest import TestCase
 from selenium import webdriver
 from pages.login_page import LoginPage
-from data.fake_data import  FakeData
+from data.fake_data import FakeData
 
 class BaseTest(TestCase):
     """

@@ -1,3 +1,4 @@
+from selenium.webdriver import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -45,15 +46,51 @@ class ItemsPage(BasePage):
             return False
 
     def get_items_list(self):
-
-        # Zwracama listę linków
+        """
+            Funkcja zwraca listę pozycji asortmenetowych.
+            Ładowane są kontrolki
+                1. Link do szczegółów (webelement)
+                2. Nazwa (string)
+                3. Kod (string)
+                4. Ilość (webelement)
+        :return: Lista krotek z webelemetami
+        """
+        # Deklaruje listę która będzie zwracana przez funckcję
         elms = []
+        # Ładuje listę pozycji (webelementów)
         el = self.driver.find_elements(*Locators.ITEMS)
+        # Przewijam na dół strony, żeby załadowały się wszystkie pozycje
+        self.driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
         for i in range(len(el)):
-            item_link = self.driver.find_element(By.XPATH, Locators.ITEM_LINK.format(i+1))
-            item_name = self.driver.find_element(By.XPATH, Locators.ITEM_DESCRIPTION.format(i+1)).text
-            item_code = self.driver.find_element(By.XPATH, Locators.ITEM_CODE.format(i+1)).text
-            item_amount = self.driver.find_element(By.XPATH, Locators.ITEM_AMOUNT.format(i+1))
-            elms.append((el[i], item_link, item_name,item_code, item_amount))
+            # Dodaję wait na każdy element w trakcie testów nie zdążyły się załadować wszystkie
+            # pozycje z listy (wolne łącze)
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, Locators.ITEM_LINK.format(i + 1))))
+            item_link = self.driver.find_element(By.XPATH, Locators.ITEM_LINK.format(i + 1))
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, Locators.ITEM_DESCRIPTION.format(i + 1))))
+            item_name = self.driver.find_element(By.XPATH, Locators.ITEM_DESCRIPTION.format(i + 1)).text
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, Locators.ITEM_CODE.format(i + 1))))
+            item_code = self.driver.find_element(By.XPATH, Locators.ITEM_CODE.format(i + 1)).text
+            self.wait.until(EC.visibility_of_element_located((By.XPATH, Locators.ITEM_AMOUNT.format(i + 1))))
+            item_amount = self.driver.find_element(By.XPATH, Locators.ITEM_AMOUNT.format(i + 1))
+            elms.append((el[i], item_link, item_name, item_code, item_amount))
 
         return elms
+
+    def set_amount(self, amount_input, amount):
+        """
+            Ustawia pole ilość przekazaną wartości
+        :param amount_input: pole input do wpisania danych
+        :param amount: wartość do wpisania
+        :return: funkcja nie zwraca obiektu
+        """
+        amount_input.send_keys(amount)
+
+    def get_amount(self, amount_input):
+        """
+            Funckja zwraca wartość ze wskaznaego elementu
+        :param amount_input: pole input do odczytania
+        :return: wartość elementu
+        """
+        # Z webelementów typy input wartość odczytuje się z atrybutu
+        # Nie można użyć text
+        return amount_input.get_attribute("value")

@@ -1,8 +1,11 @@
+# Pages
 from pages.main_page import MainPage
+# Tests
 from tests.base_test import BaseTest
+# Data
 from data.valid_data import ValidData
+# Helpers
 from helpers import helpers
-
 
 class LoginTests(BaseTest):
     """
@@ -68,10 +71,7 @@ class LoginTests(BaseTest):
         try:
             self.main_page = helpers.login(self.login_page, ValidData.customer, ValidData.user_name,
                                            self.fake_data.fake_password, True, True)
-            if type(self.main_page) != MainPage:
-                self.assertNotEqual("ok", self.login_page.get_login_error_message())
-            else:
-                assert False
+            self.assertNotEqual("ok", self.login_page.get_login_error_message())
         except:
             assert False
 
@@ -88,10 +88,7 @@ class LoginTests(BaseTest):
         try:
             self.main_page = helpers.login(self.login_page, self.fake_data.fake_company, ValidData.user_name,
                                            ValidData.password, True, True)
-            if type(self.main_page) != MainPage:
-                self.assertNotEqual("ok", self.login_page.get_login_error_message())
-            else:
-                assert False
+            self.assertNotEqual("ok", self.login_page.get_login_error_message())
         except:
             assert False
 
@@ -108,10 +105,7 @@ class LoginTests(BaseTest):
         try:
             self.main_page = helpers.login(self.login_page, ValidData.customer, self.fake_data.fake_username,
                                            ValidData.password, True, True)
-            if type(self.main_page) != MainPage:
-                self.assertNotEqual("ok", self.login_page.get_login_error_message())
-            else:
-                assert False
+            self.assertNotEqual("ok", self.login_page.get_login_error_message())
         except:
             assert False
 
@@ -128,9 +122,6 @@ class LoginTests(BaseTest):
         try:
             self.main_page = helpers.login(self.login_page, ValidData.customer, ValidData.user_name, ValidData.password,
                                            True, False)
-            if type(self.main_page) != MainPage:
-                self.assertNotEqual("ok", self.login_page.get_terms_not_accepted_error_message())
-            else:
-                assert False
+            self.assertNotEqual("ok", self.login_page.get_terms_not_accepted_error_message())
         except:
             assert False

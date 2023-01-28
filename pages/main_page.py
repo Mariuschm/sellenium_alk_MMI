@@ -58,6 +58,8 @@ class MainPage(BasePage):
         el.click()
 
     def get_categories(self):
+        # Dodaj wait - na wolnych łączach należy poczekać na załadowanie listy
+        self.wait.until(EC.visibility_of_element_located(Locators.CATEGORIES))
         cats = self.driver.find_elements(*Locators.CATEGORIES)
         return cats
 

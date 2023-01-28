@@ -25,6 +25,7 @@ class Locators:
     # Ostrzeżenie o braku akceptacji regulaminu
     TERMS_NOT_ACCEPTED_MESSAGE = (By.XPATH, "//small[@class='validation-error danger']")
 
+
 class LoginPage(BasePage):
 
     def _verify_page(self):
@@ -110,7 +111,7 @@ class LoginPage(BasePage):
         :return: komunikat błędu lub ok
         """
         try:
-            self.wait.until(EC.visibility_of_element_located(Locators.TERMS_CONFIRMATION))
+            self.wait.until(EC.visibility_of_element_located(Locators.ERROR_MESSAGE_LOGIN))
             el = self.driver.find_element(*Locators.ERROR_MESSAGE_LOGIN)
             return el.text
         except:
