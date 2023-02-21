@@ -1,9 +1,11 @@
-from selenium.webdriver import Keys
+from time import sleep
+
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.base_page import BasePage
+from pages.cart_page import CartPage
 
 
 class Locators:
@@ -32,6 +34,18 @@ class Locators:
                   "/app-stepper" \
                   "/div[@role='group']" \
                   "/input"
+    STEPPER_ADD = "//li[contains(@class, 'list-item')][{0}]" \
+                  "/div[@class='item-info add-column flex flex-wrap']" \
+                  "/div[@class='amount-section']" \
+                  "/app-stepper" \
+                  "/div[@role='group']" \
+                  "/button[@class='increase ti-plus secondary']"
+    ADD_TO_CART = (By.XPATH, "//button[@class='cart add-to-cart']")
+    CART_SELECTION = (By.XPATH, "//app-cart-select[@name='cartId']")
+    NEW_CART_OPTION = (By.ID, "cartId--1")
+    CART_CONFIRMATION = (By.XPATH, "//div[@class='modal-content mauto']")
+    CART_ID = (By.XPATH, "//span[@class='mauto']/strong")
+    GO_TO_CART = (By.XPATH, "//button[@class='cart']")
 
 
 class ItemsPage(BasePage):
@@ -72,7 +86,9 @@ class ItemsPage(BasePage):
             item_code = self.driver.find_element(By.XPATH, Locators.ITEM_CODE.format(i + 1)).text
             self.wait.until(EC.visibility_of_element_located((By.XPATH, Locators.ITEM_AMOUNT.format(i + 1))))
             item_amount = self.driver.find_element(By.XPATH, Locators.ITEM_AMOUNT.format(i + 1))
-            elms.append((el[i], item_link, item_name, item_code, item_amount))
+            stepper = self.driver.find_element(By.XPATH, Locators.STEPPER_ADD.format(i + 1))
+            add_to_cart = self.driver.find_element(*Locators.ADD_TO_CART)
+            elms.append((el[i], item_link, item_name, item_code, item_amount, add_to_cart, stepper))
 
         return elms
 
@@ -83,7 +99,24 @@ class ItemsPage(BasePage):
         :param amount: wartość do wpisania
         :return: funkcja nie zwraca obiektu
         """
+        # Dla pozycji z ilościami całkowitymi działa poprawnie
+        # Dla pozostałych obcina lub nie dodaje
+        amount_input.clear()
         amount_input.send_keys(amount)
+
+    def set_amount_stepper(self, stepper, amount):
+        """
+            Ustawia ilośc za pomocą steppera
+        :param stepper: stepper do zwiększania ilości
+        :param amount: wartość do wpisania
+        :return: funkcja nie zwraca obiektu
+        """
+        # Dla pozycji z ilościami całkowitymi działa poprawnie
+        # Dla pozostałych obcina lub nie dodaje
+        i = 1
+        while i < int(amount):
+            stepper.click()
+            i = i + 1
 
     def get_amount(self, amount_input):
         """
@@ -94,3 +127,30 @@ class ItemsPage(BasePage):
         # Z webelementów typy input wartość odczytuje się z atrybutu
         # Nie można użyć text
         return amount_input.get_attribute("value")
+
+    def add_to_cart(self, add_to_cart_button):
+        """
+            Metdoa dodaje uzupełnione pozycje do koszyka
+        :param add_to_cart_button: przycisk koszyka
+        :return: id koszyka, strona koszyka
+        """
+        # Czekam na załadowania wyboru koszya
+
+        self.wait.until(EC.visibility_of_element_located(Locators.CART_SELECTION))
+        # Klikam
+        self.driver.find_element(*Locators.CART_SELECTION).click()
+        # Czekam na rozwinięcie menu
+        self.wait.until(EC.visibility_of_element_located(Locators.NEW_CART_OPTION))
+        # Klikam
+        self.driver.find_element(*Locators.NEW_CART_OPTION).click()
+        # Klika w Dodaj do koszyka
+        add_to_cart_button.click()
+        # Czekam na pojawianie się okna z potwierdzeniem
+        self.wait.until(EC.visibility_of_element_located(Locators.CART_CONFIRMATION))
+        # Pobieram id koszyka
+        el = self.driver.find_element(*Locators.CART_ID)
+        new_cart_id = el.text
+        self.driver.find_element(*Locators.GO_TO_CART).click()
+        # Przechodzę do koszyka
+        cart_page = CartPage(self.driver)
+        return new_cart_id, cart_page

@@ -16,6 +16,7 @@ class Locators:
     CART_DROPDOWN = ""
     # Lista kategorii
     CATEGORIES = (By.XPATH, "//li[@class='category-item inner-clear']")
+    CATEGORY_NAME = "(//li[@class='category-item inner-clear'])[{0}]//a[@class='group-label outline button f-left']"
 
 
 class MainPage(BasePage):
@@ -62,6 +63,16 @@ class MainPage(BasePage):
         self.wait.until(EC.visibility_of_element_located(Locators.CATEGORIES))
         cats = self.driver.find_elements(*Locators.CATEGORIES)
         return cats
+
+    def get_categories_with_names(self):
+        # Dodaj wait - na wolnych łączach należy poczekać na załadowanie listy
+        self.wait.until(EC.visibility_of_element_located(Locators.CATEGORIES))
+        cats = self.driver.find_elements(*Locators.CATEGORIES)
+        cats_with_names = []
+        for i in range(len(cats)):
+            cat_name = self.driver.find_element(By.XPATH, Locators.CATEGORY_NAME.format(i + 1)).text
+            cats_with_names.append((cats[i], cat_name))
+        return cats_with_names
 
     def get_items_from_category(self, category):
         if type(category) == WebElement:
