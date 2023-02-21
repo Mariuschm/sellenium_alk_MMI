@@ -135,22 +135,24 @@ class ItemsPage(BasePage):
         :return: id koszyka, strona koszyka
         """
         # Czekam na załadowania wyboru koszya
-
-        self.wait.until(EC.visibility_of_element_located(Locators.CART_SELECTION))
-        # Klikam
-        self.driver.find_element(*Locators.CART_SELECTION).click()
-        # Czekam na rozwinięcie menu
-        self.wait.until(EC.visibility_of_element_located(Locators.NEW_CART_OPTION))
-        # Klikam
-        self.driver.find_element(*Locators.NEW_CART_OPTION).click()
-        # Klika w Dodaj do koszyka
-        add_to_cart_button.click()
-        # Czekam na pojawianie się okna z potwierdzeniem
-        self.wait.until(EC.visibility_of_element_located(Locators.CART_CONFIRMATION))
-        # Pobieram id koszyka
-        el = self.driver.find_element(*Locators.CART_ID)
-        new_cart_id = el.text
-        self.driver.find_element(*Locators.GO_TO_CART).click()
-        # Przechodzę do koszyka
-        cart_page = CartPage(self.driver)
-        return new_cart_id, cart_page
+        try:
+            self.wait.until(EC.visibility_of_element_located(Locators.CART_SELECTION))
+            # Klikam
+            self.driver.find_element(*Locators.CART_SELECTION).click()
+            # Czekam na rozwinięcie menu
+            self.wait.until(EC.visibility_of_element_located(Locators.NEW_CART_OPTION))
+            # Klikam
+            self.driver.find_element(*Locators.NEW_CART_OPTION).click()
+            # Klika w Dodaj do koszyka
+            add_to_cart_button.click()
+            # Czekam na pojawianie się okna z potwierdzeniem
+            self.wait.until(EC.visibility_of_element_located(Locators.CART_CONFIRMATION))
+            # Pobieram id koszyka
+            el = self.driver.find_element(*Locators.CART_ID)
+            new_cart_id = el.text
+            self.driver.find_element(*Locators.GO_TO_CART).click()
+            # Przechodzę do koszyka
+            cart_page = CartPage(self.driver)
+            return new_cart_id, cart_page
+        except TimeoutError:
+            return 0, ""
