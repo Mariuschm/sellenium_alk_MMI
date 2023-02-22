@@ -2,11 +2,14 @@ from unittest import TestCase
 from selenium import webdriver
 from pages.login_page import LoginPage
 from data.fake_data import FakeData
+import configparser
+
 
 class BaseTest(TestCase):
     """
         Klasa bazowa dla wszystkich testów niezależnie
     """
+
     def setUp(self):
         """
             Definuiujemy warunki wejścia do testów
@@ -14,8 +17,18 @@ class BaseTest(TestCase):
             2. Wejdź na stronę https://demob2b-xl.comarch.pl/ [podstaw właściwą]
         :return:
         """
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+        browser = config.get('Config', 'browser')
         # Dodanie webdriver
-        self.driver = webdriver.Chrome()
+        match browser.lower():
+            case "firefox":
+                self.driver = webdriver.Firefox()
+            case "chrome":
+                self.driver = webdriver.Chrome()
+            case "egde":
+                self.driver = webdriver.Edge()
+
         # Maksymalizacja okna
         self.driver.maximize_window()
         # Otwarcie strony
