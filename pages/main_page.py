@@ -39,6 +39,7 @@ class MainPage(BasePage):
         # Czekam aż zostanie wypełniona wartość akronimu klienta
         # W testach wartość pojawiała się po dłuższym czasie, obecność kontrolki jest sprawdzana
         # w metodzie veriry_page()
+        self.wait.until(EC.visibility_of_element_located(Locators.CUSTOMER_NAME))
         el = self.driver.find_element(*Locators.CUSTOMER_NAME)
         return el.text
 

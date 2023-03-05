@@ -65,15 +65,7 @@ class CartTest(BaseTest):
                 1. Otwarta przeglądarka
                 2. Otwarta strona [https://demob2b-xl.comarch.pl/]
                 3. Zaloguj się poprawnymi danymi
-              Kroki:
-                1. Wybierz kategorię
-                2. Znajdź towar
-                3. Ustaw ilość na towarze
-                4. Rozwiń wybór koszyków
-                5. Wskaż nowy koszyk
-                6. Kliknij dodaj do koszyka
-                7. Potwierdź przejście do koszyka
-                8. Sprawdź czy produkt dodany w zadanej ilości
+            pyt
         :return: test powiedzie się jeżeli dodano produkt w poprawnej ilości
         """
         # Plik powinien zawierać kolumny: kategoria, kod, ilość
@@ -95,7 +87,7 @@ class CartTest(BaseTest):
                 return
             page.set_amount(item[0][4], amount)
             # Dodaj do koszyka, poczekaj na stronę
-            ret = page.add_to_cart(item[5])
+            ret = page.add_to_cart(item[0][5])
             self.cart_id = ret[0]
             self.cart_page = ret[1]
             # Jeżeli załadowano stronę koszyka jest ok
