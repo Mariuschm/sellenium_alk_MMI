@@ -8,7 +8,11 @@ import csv
 
 
 def get_data_from_csv(filename):
-    """ get login data from csv file"""
+    """
+        Zwraca zwartość pliku CSC
+    :param filename: plik
+    :return: lista wierszy
+    """
     rows = []
     # Strona kodowa umożliwiając obsługę polskich znaków
     data_file = open(filename, "r", encoding="utf-8")
@@ -44,10 +48,11 @@ class CartTest(BaseTest):
         self.cart_id = 0
 
     def tearDown(self):
-        # Kasujemy koszyk stowrzony w ramach danej sesji
-        # Nadpisuję terDown
+        # Nadpisuję tearDown
+        # Kasuję koszyk stowrzony w ramach danej sesji
         if type(self.cart_page) == CartPage and self.cart_id != 0:
             self.cart_page.remove_cart(self.cart_id)
+        # Wylogowuję się
         self.main_page.log_out()
         self.driver.quit()
 
@@ -74,17 +79,21 @@ class CartTest(BaseTest):
         # Plik powinien zawierać kolumny: kategoria, kod, ilość
         # Krok 1 Ładuję kategorię
         cats = self.main_page.get_categories_with_names()
-        # Krok 2 klikam w kategorię z pliku
+        # Krok 2 Szukam kategorii z pliku
         cat = [cats_list[0] for cats_list in cats if cats_list[1] == category][0]
+        # Krok 3 Pobieram towary z kategorii
         page = self.main_page.get_items_from_category(cat)
         # Powinna się załadować lista towarów
-        if type(page) == ItemsPage:
-            # Krok 3 odszukaj towar
+        if type(page) == ItemsPage:  # Zwrócona strona typu ItemsPage
+            # Krok 4 Szukam towaru na liście
             items = page.get_items_list()
-            item = [items_list for items_list in items if items_list[3] == item_code][0]
+            item = [items_list for items_list in items if items_list[3] == item_code]
             # asercja czy to jest item
             # Ustaw ilość i dodaj do koszyka
-            page.set_amount(item[4], amount)
+            if len(item) == 0:
+                assert False
+                return
+            page.set_amount(item[0][4], amount)
             # Dodaj do koszyka, poczekaj na stronę
             ret = page.add_to_cart(item[5])
             self.cart_id = ret[0]
