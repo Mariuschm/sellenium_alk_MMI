@@ -26,7 +26,7 @@ class BaseTest(TestCase):
                 self.driver = webdriver.Firefox()
             case "chrome":
                 self.driver = webdriver.Chrome()
-            case "egde":
+            case "edge":
                 self.driver = webdriver.Edge()
 
         # Maksymalizacja okna

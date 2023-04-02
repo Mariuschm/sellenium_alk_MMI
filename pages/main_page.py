@@ -1,3 +1,5 @@
+from time import sleep
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -39,6 +41,7 @@ class MainPage(BasePage):
         # Czekam aż zostanie wypełniona wartość akronimu klienta
         # W testach wartość pojawiała się po dłuższym czasie, obecność kontrolki jest sprawdzana
         # w metodzie veriry_page()
+        sleep(2)
         self.wait.until(EC.visibility_of_element_located(Locators.CUSTOMER_NAME))
         el = self.driver.find_element(*Locators.CUSTOMER_NAME)
         return el.text

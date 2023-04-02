@@ -1,4 +1,4 @@
 class ValidData:
-    user_name = "jan kowalski"
-    customer = "demo"
-    password ="abc123"
+    user_name = "cdntest"
+    customer = "Demo"
+    password ="Abc12345!"
