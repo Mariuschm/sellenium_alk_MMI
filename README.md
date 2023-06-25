@@ -10,8 +10,8 @@ W trakcie testów wykorzystywana będzie strona https://demob2b-xl.comarch.pl/
 
 ### Wykorzystane wzorce:
  - [X] PageObjectPattern
- - [X] PageFactory
- - 
+ - [X] Data Driven Tests
+
 ### Scenariusze testowe
 W ramach projektu zdefiniowane zostały trzy scenariusze testowe:
 1. Logowanie do systemu Comarch B2B
